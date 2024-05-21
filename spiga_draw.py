@@ -1,7 +1,7 @@
 import numpy as np
 import tqdm
 from PIL import Image
-from datasets import load_dataset
+# from datasets import load_dataset
 from spiga.inference.config import ModelConfig
 from spiga.inference.framework import SPIGAFramework
 from facelib import FaceDetector
