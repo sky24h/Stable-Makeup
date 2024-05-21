@@ -1,3 +1,10 @@
+# A more clean, easy to use version
+
+The environment setup and code structure of the original repo are just terrible.
+Thus, I forked it to create a cleaner version.
+
+----------------
+Original README:
 # Stable-Makeup: When Real-World Makeup Transfer Meets Diffusion Model
 
 <a href="https://arxiv.org/abs/2403.07764"><img src="https://img.shields.io/badge/arXiv-2403.07764-b31b1b.svg" height=22.5></a>
