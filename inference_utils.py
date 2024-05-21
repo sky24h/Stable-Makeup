@@ -99,13 +99,15 @@ def inference(pipeline, makeup_encoder, id_image_path, makeup_image_path):
 if __name__ == "__main__":
     import glob
     from tqdm import tqdm
+    from natsort import natsorted
+    torch.manual_seed(1024)
 
     pipeline, makeup_encoder = init_pipeline()
     id_folder = "./test_imgs/input_video"
     makeup_folder = "./test_imgs/makeup"
     out_folder = "./output"
-    all_id_images = sorted(glob.glob(os.path.join(id_folder, "*.png")))
-    all_makeup_images = sorted(glob.glob(os.path.join(makeup_folder, "*.jpg")))
+    all_id_images = natsorted(glob.glob(os.path.join(id_folder, "*.png")))
+    all_makeup_images = natsorted(glob.glob(os.path.join(makeup_folder, "*.jpg")))
 
     for id_image_path in tqdm(all_id_images):
         for makeup_image_path in all_makeup_images:
