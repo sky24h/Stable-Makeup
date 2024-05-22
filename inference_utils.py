@@ -16,14 +16,6 @@ from diffusers import UNet2DConditionModel as OriginalUNet2DConditionModel
 from detail_encoder.encoder_plus import detail_encoder
 from diffusers.utils import load_image
 
-
-# spiga's download always failed in my case, so I download it here instead.
-file_id = ModelConfig("300wpublic").model_weights_url.split("id=")[1]
-weights_path_dft = os.path.join(pkg_resources.resource_filename("spiga", "models/weights"), "spiga_300wpublic.pt")
-if not os.path.exists(weights_path_dft):
-    gdown_download(id=file_id, output=weights_path_dft, quiet=False, use_cookies=False)
-
-
 processor = SPIGAFramework(ModelConfig("300wpublic"))
 detector = FaceDetector(weight_path="./models/mobilenet0.25_Final.pth")
 
