@@ -4,6 +4,30 @@ The environment setup and code structure of the original repo are just terrible.
 
 So , I forked it to create a cleaner version.
 
+
+## Environment Setup
+Run the following commands to install the required packages:
+```shell
+pip install -r requirements_1.txt
+pip install -r requirements_2.txt
+```
+
+If you encounter CUDA verision mismatches error, try to install torch manually to specify the version that matches your cuda version.
+For example, if you have CUDA 11.8, you can install torch with the following command:
+```shell
+pip install torch==2.2.1 torchvision==0.17.1 torchaudio==2.2.1 --index-url https://download.pytorch.org/whl/cu118
+```
+
+You can find the correct version of torch here: https://pytorch.org/get-started/previous-versions/
+
+## Inference
+To inference, just run the following command:
+```shell
+python inference.py --id_input ./test_imgs/id/1.jpg --makeup_reference ./test_imgs/makeup/1.jpg --output_dir ./output
+```
+
+id_input can be an image or a video, and makeup_reference should be an image.
+
 Original README:
 ----------------
 # Stable-Makeup: When Real-World Makeup Transfer Meets Diffusion Model

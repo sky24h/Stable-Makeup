@@ -14,7 +14,6 @@ from pipeline_sd15 import StableDiffusionControlNetPipeline
 from diffusers import DDIMScheduler, ControlNetModel
 from diffusers import UNet2DConditionModel as OriginalUNet2DConditionModel
 from detail_encoder.encoder_plus import detail_encoder
-from diffusers.utils import load_image
 
 processor = SPIGAFramework(ModelConfig("300wpublic"))
 detector = FaceDetector(weight_path="./models/mobilenet0.25_Final.pth")
@@ -80,28 +79,10 @@ def init_pipeline():
     return pipe, makeup_encoder
 
 
-def inference(pipeline, makeup_encoder, id_image_path, makeup_image_path):
-    id_image = load_image(id_image_path).resize((512, 512))
-    makeup_image = load_image(makeup_image_path).resize((512, 512))
+def inference(pipeline, makeup_encoder, id_image_pil, makeup_image_pil, size=512):
+    id_image = id_image_pil.resize((size, size))
+    makeup_image = makeup_image_pil.resize((size, size))
     pose_image = get_draw(id_image, size=512)
     result_img = makeup_encoder.generate(id_image=[id_image, pose_image], makeup_image=makeup_image, pipe=pipeline, guidance_scale=1.6)
     return result_img
 
-
-if __name__ == "__main__":
-    import glob
-    from tqdm import tqdm
-    from natsort import natsorted
-    torch.manual_seed(1024)
-
-    pipeline, makeup_encoder = init_pipeline()
-    id_folder = "./test_imgs/input_video"
-    makeup_folder = "./test_imgs/makeup"
-    out_folder = "./output"
-    all_id_images = natsorted(glob.glob(os.path.join(id_folder, "*.png")))
-    all_makeup_images = natsorted(glob.glob(os.path.join(makeup_folder, "*.jpg")))
-
-    for id_image_path in tqdm(all_id_images):
-        for makeup_image_path in all_makeup_images:
-            result_img = inference(pipeline, makeup_encoder, id_image_path, makeup_image_path)
-            result_img.save(os.path.join(out_folder, os.path.basename(id_image_path) + "_" + os.path.basename(makeup_image_path)))
