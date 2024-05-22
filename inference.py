@@ -41,13 +41,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--id_input", type=str, help="Path to the input, can be an image, a video", required=True)
     parser.add_argument("--makeup_reference", type=str, help="Path to the makeup image file", required=True)
-    parser.add_argument("--out_folder", type=str, default="./output")
+    parser.add_argument("--output_dir", type=str, default="./output")
     args = parser.parse_args()
 
     id_input         = args.id_input
     makeup_reference = args.makeup_reference
-    out_folder       = args.out_folder
-    os.makedirs(out_folder, exist_ok=True)
+    output_dir       = args.output_dir
+    os.makedirs(output_dir, exist_ok=True)
 
     pipeline, makeup_encoder = init_pipeline()
 
@@ -70,12 +70,12 @@ if __name__ == "__main__":
         raise ValueError("No input images loaded")
     elif len(id_images) == 1:
         result_img = inference(pipeline, makeup_encoder, id_images[0], makeup_image_pil)
-        result_img.save(os.path.join(out_folder, id_basename + "_makeup.png"))
-        print(f"Output Image Saved to {os.path.join(out_folder, id_basename + '_makeup.png')}")
+        result_img.save(os.path.join(output_dir, id_basename + "_makeup.png"))
+        print(f"Output Image Saved to {os.path.join(output_dir, id_basename + '_makeup.png')}")
     elif len(id_images) > 1:
-        writer = imageio.get_writer(os.path.join(out_folder, id_basename + "_makeup.mp4"), fps=10, quality=9, codec="libx264")
+        writer = imageio.get_writer(os.path.join(output_dir, id_basename + "_makeup.mp4"), fps=10, quality=9, codec="libx264")
         for id_image_pil in tqdm(id_images):
             result_img = inference(pipeline, makeup_encoder, id_image_pil, makeup_image_pil)
             writer.append_data(np.array(result_img))
         writer.close()
-        print(f"Output Video Saved to {os.path.join(out_folder, id_basename + '_makeup.mp4')}")
+        print(f"Output Video Saved to {os.path.join(output_dir, id_basename + '_makeup.mp4')}")
