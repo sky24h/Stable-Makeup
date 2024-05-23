@@ -1,5 +1,8 @@
 import os
-import torch
+import torch, random
+torch.manual_seed(1024)
+random.seed(1024)
+
 import pkg_resources
 from PIL import Image
 from facelib import FaceDetector
