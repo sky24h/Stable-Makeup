@@ -1,13 +1,23 @@
-import numpy as np
+import os
+import cv2
 import tqdm
+import numpy as np
 from PIL import Image
-# from datasets import load_dataset
+from facelib import FaceDetector
 from spiga.inference.config import ModelConfig
 from spiga.inference.framework import SPIGAFramework
-from facelib import FaceDetector
-import cv2
-import os
 
+
+
+# SPIGA ckpt downloading always fails, so we download it manually and put it in the right place.
+import site
+from gdown import download
+user_site_packages_path = site.getusersitepackages()
+spiga_file_id = "1YrbScfMzrAAWMJQYgxdLZ9l57nmTdpQC"
+ckpt_path = os.path.join(user_site_packages_path, "spiga/models/weights/spiga_300wpublic.pt")
+if not os.path.exists(ckpt_path):
+    os.makedirs(os.path.dirname(ckpt_path), exist_ok=True)
+    download(id=spiga_file_id, output=ckpt_path)
 processor = SPIGAFramework(ModelConfig("300wpublic"))
 
 def center_crop(image, size):
@@ -80,9 +90,9 @@ def bbox_from_landmarks(landmarks_):
         height = y_max - y_min
 
         # Give it a little room; I think it works anyway
-        x_min -= 5
-        y_min -= 5
-        width += 10
+        x_min  -= 5
+        y_min  -= 5
+        width  += 10
         height += 10
         bbox.append((x_min, y_min, width, height))
     return bbox
@@ -98,11 +108,11 @@ def spiga_process(example, detector):
         image = example
         image = np.array(image)
         # BGR
-        image = image[:, :, ::-1]
-        bbox = bbox_from_landmarks(ldms)
-        features = processor.inference(image, [*bbox])
+        image     = image[:, :, ::-1]
+        bbox      = bbox_from_landmarks(ldms)
+        features  = processor.inference(image, [*bbox])
         landmarks = features["landmarks"]
-        spigas = landmarks
+        spigas    = landmarks
         return spigas
 
 
@@ -145,12 +155,12 @@ def conditioning_from_landmarks(landmarks_, size=512):
 
     for landmarks in landmarks_:
         face_patch = get_patch(landmarks[0:17])
-        l_eyebrow = get_patch(landmarks[17:22], color='yellow')
-        r_eyebrow = get_patch(landmarks[22:27], color='yellow')
-        nose_v = get_patch(landmarks[27:31], color='orange')
-        nose_h = get_patch(landmarks[31:36], color='orange')
-        l_eye = get_patch(landmarks[36:42], color='magenta', closed=True)
-        r_eye = get_patch(landmarks[42:48], color='magenta', closed=True)
+        l_eyebrow  = get_patch(landmarks[17:22], color='yellow')
+        r_eyebrow  = get_patch(landmarks[22:27], color='yellow')
+        nose_v     = get_patch(landmarks[27:31], color='orange')
+        nose_h     = get_patch(landmarks[31:36], color='orange')
+        l_eye      = get_patch(landmarks[36:42], color='magenta', closed=True)
+        r_eye      = get_patch(landmarks[42:48], color='magenta', closed=True)
         outer_lips = get_patch(landmarks[48:60], color='cyan', closed=True)
         inner_lips = get_patch(landmarks[60:68], color='blue', closed=True)
 

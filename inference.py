@@ -1,5 +1,4 @@
 import os
-import cv2
 import imageio
 import numpy as np
 from PIL import Image
@@ -7,10 +6,8 @@ import torch
 torch.manual_seed(1024)
 
 from inference_utils import init_pipeline, inference
-pipeline = init_pipeline()
-
-from batch_face import RetinaFace
 from face_utils import get_face_img, get_faces_video
+from batch_face import RetinaFace
 face_detector = RetinaFace(gpu_id=0) if torch.cuda.is_available() else RetinaFace(gpu_id=-1)
 
 
@@ -23,8 +20,8 @@ def check_if_video_file(filename):
 
 def concat_image(image1, image2, image3):
     # resize to the same size of image3
-    image1 = image1.resize(image3.size)
-    image2 = image2.resize(image3.size)
+    image1     = image1.resize(image3.size)
+    image2     = image2.resize(image3.size)
     concat_img = Image.new("RGB", (image3.width*3, image3.height))
     concat_img.paste(image1, (0, 0))
     concat_img.paste(image2, (image3.width, 0))
@@ -32,11 +29,8 @@ def concat_image(image1, image2, image3):
     return concat_img
 
 if __name__ == "__main__":
-    import glob
-    from tqdm import tqdm
-    from natsort import natsorted
-
     import argparse
+    from tqdm import tqdm
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--id_input", type=str, help="Path to the input, can be an image, a video", required=True)
@@ -77,7 +71,7 @@ if __name__ == "__main__":
     elif len(id_images) == 1:
         result_img = inference(pipeline, makeup_encoder, id_images[0], makeup_image_pil)
         # concat id, makeup and result images
-        concat_img = concat_image(id_image_pil, makeup_image_pil, result_img)
+        concat_img = concat_image(id_images[0], makeup_image_pil, result_img)
         concat_img.save(os.path.join(output_dir, id_basename + makeup_basename + '.png'))
         print(f"Output Image Saved to {os.path.join(output_dir, id_basename + makeup_basename + '.png')}")
     elif len(id_images) > 1:
