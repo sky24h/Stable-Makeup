@@ -82,11 +82,14 @@ def init_pipeline():
     pipe.scheduler = DDIMScheduler.from_config(pipe.scheduler.config)
     return pipe, makeup_encoder
 
+# Initialize the model
+pipeline, makeup_encoder = init_pipeline()
 
-def inference(pipeline, makeup_encoder, id_image_pil, makeup_image_pil, size=512):
+
+def inference(id_image_pil, makeup_image_pil, guidance_scale=1.6, size=512):
     id_image     = id_image_pil.resize((size, size))
     makeup_image = makeup_image_pil.resize((size, size))
-    pose_image   = get_draw(id_image, size=512)
-    result_img   = makeup_encoder.generate(id_image=[id_image, pose_image], makeup_image=makeup_image, pipe=pipeline, guidance_scale=1.6)
+    pose_image   = get_draw(id_image, size=size)
+    result_img   = makeup_encoder.generate(id_image=[id_image, pose_image], makeup_image=makeup_image, pipe=pipeline, guidance_scale=guidance_scale)
     return result_img
 

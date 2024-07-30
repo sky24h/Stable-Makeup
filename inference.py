@@ -5,7 +5,7 @@ from PIL import Image
 import torch
 torch.manual_seed(1024)
 
-from inference_utils import init_pipeline, inference
+from inference_utils import inference
 from face_utils import get_face_img, get_faces_video
 from batch_face import RetinaFace
 face_detector = RetinaFace(gpu_id=0) if torch.cuda.is_available() else RetinaFace(gpu_id=-1)
@@ -44,8 +44,6 @@ if __name__ == "__main__":
     output_dir       = args.output_dir
     os.makedirs(output_dir, exist_ok=True)
 
-    pipeline, makeup_encoder = init_pipeline()
-
     # check if the input is a video or an image
     id_basename = os.path.basename(id_input).split(".")[0]
     if check_if_video_file(id_input):
@@ -69,7 +67,7 @@ if __name__ == "__main__":
     if len(id_images) == 0:
         raise ValueError("No input images loaded")
     elif len(id_images) == 1:
-        result_img = inference(pipeline, makeup_encoder, id_images[0], makeup_image_pil)
+        result_img = inference(id_images[0], makeup_image_pil)
         # concat id, makeup and result images
         concat_img = concat_image(id_images[0], makeup_image_pil, result_img)
         concat_img.save(os.path.join(output_dir, id_basename + makeup_basename + '.png'))
@@ -83,7 +81,7 @@ if __name__ == "__main__":
             fps = 25
         writer = imageio.get_writer(os.path.join(output_dir, id_basename + makeup_basename + '.mp4'), fps=fps if not args.fast_test else fps/5, quality=9, codec="libx264")
         for id_image_pil in tqdm(id_images):
-            result_img = inference(pipeline, makeup_encoder, id_image_pil, makeup_image_pil)
+            result_img = inference(id_image_pil, makeup_image_pil)
             concat_img = concat_image(id_image_pil, makeup_image_pil, result_img)
             writer.append_data(np.array(concat_img))
         writer.close()
