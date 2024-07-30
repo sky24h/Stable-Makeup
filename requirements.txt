@@ -1,0 +1,16 @@
+torch==2.2.1 # if you encounter CUDA verision mismatches error, try to install torch manually to specify the version that matches your cuda version
+xformers==0.0.25
+transformers==4.42.4
+accelerate==0.33.0
+diffusers==0.29.2
+imageio==2.34.2
+imageio-ffmpeg==0.5.1
+PyYAML
+timm
+gradio
+huggingface-hub
+gdown
+natsort
+spiga
+batch_face
+facelib @ git+https://github.com/sajjjadayobi/FaceLib.git@382841efec823f059f49754e5d378abb12cfb551
