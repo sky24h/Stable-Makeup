@@ -7,17 +7,6 @@ from facelib import FaceDetector
 from spiga.inference.config import ModelConfig
 from spiga.inference.framework import SPIGAFramework
 
-
-
-# SPIGA ckpt downloading always fails, so we download it manually and put it in the right place.
-import site
-from gdown import download
-user_site_packages_path = site.getusersitepackages()
-spiga_file_id = "1YrbScfMzrAAWMJQYgxdLZ9l57nmTdpQC"
-ckpt_path = os.path.join(user_site_packages_path, "spiga/models/weights/spiga_300wpublic.pt")
-if not os.path.exists(ckpt_path):
-    os.makedirs(os.path.dirname(ckpt_path), exist_ok=True)
-    download(id=spiga_file_id, output=ckpt_path)
 processor = SPIGAFramework(ModelConfig("300wpublic"))
 
 def center_crop(image, size):
