@@ -4,12 +4,13 @@ The environment setup and code structure of the original repo are just terrible.
 
 So , I forked it to create a cleaner version.
 
+### Update
+- [x] Created a Gradio demo on Hugging Face: https://huggingface.co/spaces/sky24h/Stable-Makeup-unofficial
 
 ## Environment Setup
 Run the following commands to install the required packages:
 ```shell
-pip install -r requirements_1.txt
-pip install -r requirements_2.txt
+pip install -r requirements.txt
 ```
 
 If you encounter CUDA verision mismatches error, try to install torch manually to specify the version that matches your cuda version.
