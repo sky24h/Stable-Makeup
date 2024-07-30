@@ -7,7 +7,16 @@ from facelib import FaceDetector
 from spiga.inference.config import ModelConfig
 from spiga.inference.framework import SPIGAFramework
 
-processor = SPIGAFramework(ModelConfig("300wpublic"))
+# The SPIGA checkpoint download often fails, so we downloaded it manually and will load it from a local path instead.
+spiga_ckpt = os.path.join(os.path.dirname(__file__), "checkpoints/spiga_300wpublic.pt")
+if not os.path.exists(spiga_ckpt):
+    from gdown import download
+    spiga_file_id = "1YrbScfMzrAAWMJQYgxdLZ9l57nmTdpQC"
+    download(id=spiga_file_id, output=spiga_ckpt)
+spiga_config = ModelConfig("300wpublic")
+spiga_config.load_model_url = False
+spiga_config.model_weights_path = os.path.dirname(spiga_ckpt)
+processor = SPIGAFramework(spiga_config)
 
 def center_crop(image, size):
     width, height = image.size

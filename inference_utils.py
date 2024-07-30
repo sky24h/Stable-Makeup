@@ -1,5 +1,6 @@
 import os
-import torch, random
+import torch
+import random
 
 seed = 1024
 random.seed(seed)
@@ -8,17 +9,6 @@ torch.cuda.manual_seed(seed)
 torch.cuda.manual_seed_all(seed)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
-
-
-# SPIGA ckpt downloading always fails, so we download it manually and put it in the right place.
-import site
-from gdown import download
-user_site_packages_path = site.getusersitepackages()
-spiga_file_id = "1YrbScfMzrAAWMJQYgxdLZ9l57nmTdpQC"
-ckpt_path = os.path.join(user_site_packages_path, "spiga/models/weights/spiga_300wpublic.pt")
-if not os.path.exists(ckpt_path):
-    os.makedirs(os.path.dirname(ckpt_path), exist_ok=True)
-    download(id=spiga_file_id, output=ckpt_path)
 
 from PIL import Image
 from gdown import download_folder
@@ -29,7 +19,6 @@ from pipeline_sd15 import StableDiffusionControlNetPipeline
 from diffusers import DDIMScheduler, ControlNetModel
 from diffusers import UNet2DConditionModel as OriginalUNet2DConditionModel
 from detail_encoder.encoder_plus import detail_encoder
-
 
 detector = FaceDetector(weight_path="./models/mobilenet0.25_Final.pth")
 
@@ -93,6 +82,7 @@ def init_pipeline():
     pipe.scheduler = DDIMScheduler.from_config(pipe.scheduler.config)
     return pipe, makeup_encoder
 
+
 # Initialize the model
 pipeline, makeup_encoder = init_pipeline()
 
@@ -103,4 +93,3 @@ def inference(id_image_pil, makeup_image_pil, guidance_scale=1.6, size=512):
     pose_image   = get_draw(id_image, size=size)
     result_img   = makeup_encoder.generate(id_image=[id_image, pose_image], makeup_image=makeup_image, pipe=pipeline, guidance_scale=guidance_scale)
     return result_img
-
